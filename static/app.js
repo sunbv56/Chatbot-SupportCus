@@ -16,6 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const rateLimitProgress = document.getElementById("rateLimitProgress");
     const rateLimitMessage = document.getElementById("rateLimitMessage");
     const demoChatBtn = document.getElementById("demoChatBtn");
+    const toggleHelper = document.getElementById("toggleHelper");
+    const closeHelper = document.getElementById("closeHelper");
+    const helperDrawer = document.getElementById("helperDrawer");
+    const helperBookList = document.getElementById("helperBookList");
+    const helperOrderList = document.getElementById("helperOrderList");
+
 
     const API_BASE = window.location.origin;
 
@@ -362,4 +368,118 @@ document.addEventListener("DOMContentLoaded", () => {
         const val = btn.dataset.value;
         handleQuickAction(val);
     });
+
+    // Helper Drawer Actions
+    toggleHelper.addEventListener("click", async () => {
+        const isHidden = helperDrawer.classList.contains("hidden");
+        if (isHidden) {
+            helperDrawer.classList.remove("hidden");
+            await loadDemoData();
+        } else {
+            helperDrawer.classList.add("hidden");
+        }
+    });
+
+    closeHelper.addEventListener("click", () => {
+        helperDrawer.classList.add("hidden");
+    });
+
+    // Tab switching in helper drawer
+    const tabButtons = helperDrawer.querySelectorAll(".tab-btn");
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabButtons.forEach(b => b.classList.remove("active"));
+            helperDrawer.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+            
+            btn.classList.add("active");
+            const tabId = btn.dataset.tab;
+            document.getElementById(tabId).classList.add("active");
+        });
+    });
+
+    // Handle suggestion chip clicks
+    helperDrawer.querySelectorAll(".prompt-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            sendMessage(chip.innerText);
+            helperDrawer.classList.add("hidden");
+        });
+    });
+
+    // Load mock products and orders from server
+    async function loadDemoData() {
+        try {
+            helperBookList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải sách...</div>`;
+            helperOrderList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải đơn...</div>`;
+            
+            const response = await fetch(`${API_BASE}/api/demo/data`);
+            if (response.ok) {
+                const data = await response.json();
+                renderDemoBooks(data.products);
+                renderDemoOrders(data.orders);
+            } else {
+                helperBookList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:#f43f5e;">Lỗi tải dữ liệu.</div>`;
+                helperOrderList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:#f43f5e;">Lỗi tải dữ liệu.</div>`;
+            }
+        } catch (err) {
+            console.error("Error loading demo data:", err);
+            helperBookList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:#f43f5e;">Lỗi kết nối server.</div>`;
+            helperOrderList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:#f43f5e;">Lỗi kết nối server.</div>`;
+        }
+    }
+
+    function renderDemoBooks(books) {
+        if (!books || books.length === 0) {
+            helperBookList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:var(--text-muted);">Không có sách nào.</div>`;
+            return;
+        }
+        helperBookList.innerHTML = books.map(book => `
+            <div class="helper-item" data-title="${book.title}">
+                <h5>${book.title}</h5>
+                <p>Tác giả: <strong>${book.author}</strong> | Thể loại: <strong>${book.category}</strong></p>
+                <p>Giá: <strong style="color:#f43f5e">${book.price}</strong></p>
+                <p style="font-size:0.68rem; margin-top:0.2rem; color:var(--text-muted)">${book.description}</p>
+            </div>
+        `).join("");
+        
+        // Add click listener
+        helperBookList.querySelectorAll(".helper-item").forEach(item => {
+            item.addEventListener("click", () => {
+                const title = item.dataset.title;
+                sendMessage(`Cho tôi thông tin sách "${title}"`);
+                helperDrawer.classList.add("hidden");
+            });
+        });
+    }
+
+    function renderDemoOrders(orders) {
+        if (!orders || orders.length === 0) {
+            helperOrderList.innerHTML = `<div style="padding:1rem; text-align:center; font-size:0.8rem; color:var(--text-muted);">Không có đơn hàng nào.</div>`;
+            return;
+        }
+        const statusMap = {
+            "paid": "Đã thanh toán (Paid)",
+            "shipping": "Đang giao hàng (Shipping)",
+            "pending": "Chờ thanh toán (Pending)",
+            "delivered": "Đã giao (Delivered)",
+            "cancelled": "Đã hủy (Cancelled)",
+            "refunded": "Đã hoàn tiền (Refunded)",
+            "returning": "Đang chuyển hoàn (Returning)"
+        };
+        helperOrderList.innerHTML = orders.map(order => `
+            <div class="helper-item" data-id="${order.order_id}">
+                <h5>Đơn hàng: <strong>${order.order_id}</strong></h5>
+                <p>Khách hàng: <strong>${order.customer}</strong> | Tổng: <strong>${order.total}</strong></p>
+                <p>Trạng thái: <strong>${statusMap[order.status] || order.status}</strong></p>
+            </div>
+        `).join("");
+
+        // Add click listener
+        helperOrderList.querySelectorAll(".helper-item").forEach(item => {
+            item.addEventListener("click", () => {
+                const id = item.dataset.id;
+                sendMessage(`Tra cứu đơn hàng ${id}`);
+                helperDrawer.classList.add("hidden");
+            });
+        });
+    }
 });

@@ -113,6 +113,13 @@ def escalate_chat():
     print(f"[Escalation] Session {session_id} escalated to human agent.")
     return jsonify({"status": "success", "message": "Đã chuyển phiên chat cho nhân viên hỗ trợ."})
 
+@app.route("/api/demo/data", methods=["GET"])
+def get_demo_data():
+    return jsonify({
+        "products": products_db,
+        "orders": [{"order_id": k, "customer": v["customer"], "status": v["status"], "total": v["total"]} for k, v in orders_db.items()]
+    })
+
 # Load environment variabless
 from dotenv import load_dotenv
 import httpx

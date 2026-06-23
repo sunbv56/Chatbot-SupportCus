@@ -81,6 +81,7 @@
                 </div>
             </div>
             <div class="chat-actions">
+                <button class="chat-action-btn" id="toggleHelper" title="Gợi ý & Dữ liệu mẫu"><i class="fa-solid fa-circle-question"></i></button>
                 <button class="chat-action-btn" id="minimizeChat" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
                 <button class="chat-action-btn color-red" id="clearChat" title="Xóa cuộc trò chuyện"><i class="fa-solid fa-trash-can"></i></button>
             </div>
@@ -105,6 +106,46 @@
             <button class="quick-btn" data-value="check_order"><i class="fa-solid fa-truck"></i> Tra cứu đơn hàng</button>
             <button class="quick-btn" data-value="search_books"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm sách</button>
             <button class="quick-btn" data-value="escalate"><i class="fa-solid fa-headset"></i> Gặp hỗ trợ viên</button>
+        </div>
+
+        <!-- Helper Drawer (Suggested Prompts & Mock DB Viewer) -->
+        <div class="helper-drawer hidden" id="helperDrawer">
+            <div class="helper-drawer-header">
+                <h4><i class="fa-solid fa-circle-question"></i> Gợi ý & Dữ liệu mẫu</h4>
+                <button id="closeHelper" title="Đóng"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="helper-tabs">
+                <button class="tab-btn active" data-tab="tab-prompts">Gợi ý</button>
+                <button class="tab-btn" data-tab="tab-books">Kho Sách</button>
+                <button class="tab-btn" data-tab="tab-orders">Đơn Hàng</button>
+            </div>
+            <div class="helper-drawer-content">
+                <!-- Tab: Prompts -->
+                <div class="tab-content active" id="tab-prompts">
+                    <p class="helper-intro">Chọn một câu hỏi mẫu bên dưới để gửi nhanh cho AI:</p>
+                    <div class="prompt-suggestions">
+                        <button class="prompt-chip">Tìm giùm tôi sách về kỹ năng giao tiếp</button>
+                        <button class="prompt-chip">Sách "Nhà Giả Kim" bao nhiêu tiền?</button>
+                        <button class="prompt-chip">Tôi muốn tra cứu đơn hàng AB12345</button>
+                        <button class="prompt-chip">Tôi muốn gặp trực tiếp nhân viên tư vấn</button>
+                        <button class="prompt-chip">Có những sách gì về chủ đề Tài chính?</button>
+                    </div>
+                </div>
+                <!-- Tab: Books -->
+                <div class="tab-content" id="tab-books">
+                    <p class="helper-intro">Danh sách sách trong `products_db` (Click để hỏi):</p>
+                    <div class="helper-list" id="helperBookList">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+                <!-- Tab: Orders -->
+                <div class="tab-content" id="tab-orders">
+                    <p class="helper-intro">Danh sách mã đơn trong `orders_db` (Click để tra cứu):</p>
+                    <div class="helper-list" id="helperOrderList">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Rate Limit Alert Overlay -->
