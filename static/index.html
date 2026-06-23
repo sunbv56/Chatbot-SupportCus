@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmedi.vn - Trợ Lý Bán Hàng & Chăm Sóc Khách Hàng AI</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Mock Storefront Page to wow the user -->
+    <div class="storefront-container">
+        <header class="storefront-header">
+            <div class="logo">
+                <span class="gradient-text">Bookmedi</span><span class="logo-dot">.vn</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">Trang chủ</a>
+                <a href="#">Sách bán chạy</a>
+                <a href="#">Danh mục</a>
+                <a href="#">Về chúng tôi</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-secondary"><i class="fa-solid fa-cart-shopping"></i> Giỏ hàng (1)</button>
+                <button class="btn btn-primary" id="loginBtn">Đăng nhập</button>
+            </div>
+        </header>
+
+        <main class="storefront-hero">
+            <div class="hero-content">
+                <span class="badge">AI-Powered Bookstore</span>
+                <h1>Trải nghiệm mua sách <br><span class="gradient-text">Thông minh hơn</span></h1>
+                <p>Khám phá kho sách phong phú từ văn học, kỹ năng sống tới đầu tư tài chính với sự trợ giúp của AI Sales Assistant thế hệ mới.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-large">Khám phá ngay</button>
+                    <button class="btn btn-outline btn-large" id="demoChatBtn"><i class="fa-solid fa-comments"></i> Chat với AI</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- A decorative grid representation of books -->
+                <div class="book-card-mock card-1">
+                    <div class="book-cover mock-cover-1">Nhà Giả Kim</div>
+                    <h3>Nhà Giả Kim</h3>
+                    <p>Paulo Coelho</p>
+                </div>
+                <div class="book-card-mock card-2">
+                    <div class="book-cover mock-cover-2">Đắc Nhân Tâm</div>
+                    <h3>Đắc Nhân Tâm</h3>
+                    <p>Dale Carnegie</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Chat Widget Button -->
+    <button class="chat-widget-trigger" id="chatTrigger">
+        <i class="fa-solid fa-comments trigger-open-icon"></i>
+        <i class="fa-solid fa-xmark trigger-close-icon hidden"></i>
+        <span class="notification-badge">1</span>
+    </button>
+
+    <!-- Chat Widget Panel -->
+    <div class="chat-widget-panel" id="chatPanel">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-agent-info">
+                <div class="agent-avatar-container">
+                    <div class="agent-avatar">BM</div>
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="agent-details">
+                    <h3>Bookmedi AI Assistant</h3>
+                    <p>Mô hình: gemma4 31b (Local)</p>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="chat-action-btn" id="minimizeChat" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+                <button class="chat-action-btn color-red" id="clearChat" title="Xóa cuộc trò chuyện"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Area (Messages Scroll Container) -->
+        <div class="chat-messages" id="chatMessages">
+            <!-- Welcome message -->
+            <div class="message system-message">
+                Chào mừng bạn đến với Bookmedi.vn!
+            </div>
+            <div class="message bot-message">
+                <div class="message-content">
+                    Xin chào! Tôi là Trợ lý AI của Bookmedi. Tôi có thể giúp gì cho bạn hôm nay?
+                </div>
+                <span class="message-time">18:00</span>
+            </div>
+        </div>
+
+        <!-- Quick actions buttons container -->
+        <div class="quick-options" id="quickOptions">
+            <button class="quick-btn" data-value="check_order"><i class="fa-solid fa-truck"></i> Tra cứu đơn hàng</button>
+            <button class="quick-btn" data-value="search_books"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm sách</button>
+            <button class="quick-btn" data-value="escalate"><i class="fa-solid fa-headset"></i> Gặp hỗ trợ viên</button>
+        </div>
+
+        <!-- Rate Limit Alert Overlay -->
+        <div class="rate-limit-overlay hidden" id="rateLimitOverlay">
+            <div class="rate-limit-card">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h4>Gửi tin nhắn quá nhanh</h4>
+                <p id="rateLimitMessage">Bạn đã đạt giới hạn 10 tin nhắn/phút. Vui lòng đợi...</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="rateLimitProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lead Capture Form overlay -->
+        <div class="lead-form-overlay hidden" id="leadFormOverlay">
+            <div class="lead-form-card">
+                <h3>Nhận tư vấn & Ưu đãi</h3>
+                <p>Vui lòng để lại thông tin để AI bắt đầu tư vấn chi tiết cho bạn nhé!</p>
+                <form id="leadForm">
+                    <div class="input-group">
+                        <label for="leadName">Họ và Tên</label>
+                        <input type="text" id="leadName" required placeholder="Nguyen Van A">
+                    </div>
+                    <div class="input-group">
+                        <label for="leadEmail">Email</label>
+                        <input type="email" id="leadEmail" required placeholder="name@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="leadPhone">Số điện thoại</label>
+                        <input type="tel" id="leadPhone" required placeholder="0901234567">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="closeLeadForm">Bỏ qua</button>
+                        <button type="submit" class="btn btn-primary">Bắt đầu trò chuyện</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." autocomplete="off">
+            <button id="sendBtn" class="send-btn" disabled>
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
