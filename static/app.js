@@ -1,4 +1,4 @@
-// Bookmedi AI Assistant Client Controller
+// AloBook AI Assistant Client Controller
 document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
     const chatTrigger = document.getElementById("chatTrigger");
@@ -20,14 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE = window.location.origin;
 
     // Chat Session ID & User Data
-    let sessionId = localStorage.getItem("bookmedi_chat_session");
+    let sessionId = localStorage.getItem("alobook_chat_session");
     if (!sessionId) {
         sessionId = "sess_" + Math.random().toString(36).substring(2, 15);
-        localStorage.setItem("bookmedi_chat_session", sessionId);
+        localStorage.setItem("alobook_chat_session", sessionId);
     }
     
-    let isLeadSubmitted = localStorage.getItem("bookmedi_lead_submitted") === "true";
-    let userData = JSON.parse(localStorage.getItem("bookmedi_user_data") || "null");
+    let isLeadSubmitted = localStorage.getItem("alobook_lead_submitted") === "true";
+    let userData = JSON.parse(localStorage.getItem("alobook_user_data") || "null");
 
     // Toggle Chat Widget Open/Close
     function toggleChat(forceState = null) {
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             // Reset Session
             sessionId = "sess_" + Math.random().toString(36).substring(2, 15);
-            localStorage.setItem("bookmedi_chat_session", sessionId);
+            localStorage.setItem("alobook_chat_session", sessionId);
         }
     });
 
@@ -120,8 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 isLeadSubmitted = true;
                 userData = { name, email, phone };
-                localStorage.setItem("bookmedi_lead_submitted", "true");
-                localStorage.setItem("bookmedi_user_data", JSON.stringify(userData));
+                localStorage.setItem("alobook_lead_submitted", "true");
+                localStorage.setItem("alobook_user_data", JSON.stringify(userData));
                 
                 leadFormOverlay.classList.add("hidden");
                 
@@ -254,11 +254,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 let customElement = null;
 
                 // Handle order structured card
-                if (text.toUpperCase().includes("BM") && data.reply.includes("Mã đơn hàng:")) {
+                if (text.toUpperCase().includes("AB") && data.reply.includes("Mã đơn hàng:")) {
                     // It returned simulated order info, let's render standard order card!
                     // Extract properties
                     const lines = data.reply.split("\n");
-                    const orderId = lines[0].split(": ")[1] || "BM";
+                    const orderId = lines[0].split(": ")[1] || "AB";
                     const status = lines[1].split(": ")[1] || "pending";
                     const customer = lines[2].split(": ")[1] || "";
                     const books = lines[3].split(": ")[1] || "";
@@ -336,7 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle Quick Action Actions
     function handleQuickAction(action) {
         if (action === "check_order") {
-            appendMessage("bot", "Vui lòng nhập mã đơn hàng của bạn để tra cứu (Ví dụ: **BM12345**):");
+            appendMessage("bot", "Vui lòng nhập mã đơn hàng của bạn để tra cứu (Ví dụ: **AB12345**):");
         } else if (action === "search_books") {
             appendMessage("bot", "Bạn đang muốn tìm sách thể loại gì? (Ví dụ: **đầu tư tài chính**, **kỹ năng sống**, **tâm lý học**...)");
         } else if (action === "escalate") {

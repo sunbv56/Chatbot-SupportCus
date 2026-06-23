@@ -9,13 +9,15 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 # Mock databases
 leads_db = []
 orders_db = {
-    "BM12345": {"order_id": "BM12345", "status": "paid", "customer": "Nguyen Van A", "total": "250,000 VND", "items": ["Nhà Giả Kim"], "shipping_address": "123 Nguyen Trai, Q.5, TP.HCM"},
-    "BM67890": {"order_id": "BM67890", "status": "shipping", "customer": "Tran Thi B", "total": "420,000 VND", "items": ["Đắc Nhân Tâm", "Đọc Vị Bất Kỳ Ai"], "shipping_address": "456 Le Loi, Q.1, TP.HCM"},
-    "BM11223": {"order_id": "BM11223", "status": "pending", "customer": "Le Van C", "total": "180,000 VND", "items": ["Sách Cho Người Mới Đi Làm"], "shipping_address": "789 CMT8, Q.10, TP.HCM"},
-    "BM44556": {"order_id": "BM44556", "status": "delivered", "customer": "Pham Minh D", "total": "310,000 VND", "items": ["Đầu Tư Tài Chính"], "shipping_address": "321 Dien Bien Phu, Q. Bình Thạnh, TP.HCM"},
-    "BM77889": {"order_id": "BM77889", "status": "cancelled", "customer": "Hoang Thi E", "total": "95,000 VND", "items": ["Đọc Vị Bất Kỳ Ai"], "shipping_address": "147 Ly Tu Trong, Q.1, TP.HCM"},
-    "BM99001": {"order_id": "BM99001", "status": "refunded", "customer": "Vu Van F", "total": "86,000 VND", "items": ["Đắc Nhân Tâm"], "shipping_address": "963 Tran Hung Dao, Q.5, TP.HCM"},
-    "BM22334": {"order_id": "BM22334", "status": "returning", "customer": "Ngo Thi G", "total": "158,000 VND", "items": ["Nhà Giả Kim", "Đắc Nhân Tâm"], "shipping_address": "159 Ba Thang Hai, Q.10, TP.HCM"},
+    "AB12345": {"order_id": "AB12345", "status": "paid", "customer": "Nguyen Van A", "total": "250,000 VND", "items": ["Nhà Giả Kim"], "shipping_address": "123 Nguyen Trai, Q.5, TP.HCM"},
+    "AB67890": {"order_id": "AB67890", "status": "shipping", "customer": "Tran Thi B", "total": "420,000 VND", "items": ["Đắc Nhân Tâm", "Đọc Vị Bất Kỳ Ai"], "shipping_address": "456 Le Loi, Q.1, TP.HCM"},
+    "AB11223": {"order_id": "AB11223", "status": "pending", "customer": "Le Van C", "total": "180,000 VND", "items": ["Sách Cho Người Mới Đi Làm"], "shipping_address": "789 CMT8, Q.10, TP.HCM"},
+    "AB44556": {"order_id": "AB44556", "status": "delivered", "customer": "Pham Minh D", "total": "310,000 VND", "items": ["Đầu Tư Tài Chính"], "shipping_address": "321 Dien Bien Phu, Q. Bình Thạnh, TP.HCM"},
+    "AB77889": {"order_id": "AB77889", "status": "cancelled", "customer": "Hoang Thi E", "total": "95,000 VND", "items": ["Đọc Vị Bất Kỳ Ai"], "shipping_address": "147 Ly Tu Trong, Q.1, TP.HCM"},
+    "AB99001": {"order_id": "AB99001", "status": "refunded", "customer": "Vu Van F", "total": "86,000 VND", "items": ["Đắc Nhân Tâm"], "shipping_address": "963 Tran Hung Dao, Q.5, TP.HCM"},
+    "AB22334": {"order_id": "AB22334", "status": "returning", "customer": "Ngo Thi G", "total": "158,000 VND", "items": ["Nhà Giả Kim", "Đắc Nhân Tâm"], "shipping_address": "159 Ba Thang Hai, Q.10, TP.HCM"},
+    "AB33445": {"order_id": "AB33445", "status": "shipping", "customer": "Nguyen Thi H", "total": "180,000 VND", "items": ["Tư Duy Nhanh Và Chậm"], "shipping_address": "789 Phan Chu Trinh, Đà Nẵng"},
+    "AB55667": {"order_id": "AB55667", "status": "paid", "customer": "Tran Van I", "total": "278,000 VND", "items": ["Cha Giàu Cha Nghèo", "Tư Duy Nhanh Và Chậm"], "shipping_address": "321 Tran Phu, Nha Trang"},
 }
 products_db = [
     {"id": 1, "title": "Nhà Giả Kim", "author": "Paulo Coelho", "price": "79,000 VND", "category": "Kỹ năng sống", "description": "Một cuốn sách triết lý sâu sắc về việc theo đuổi ước mơ."},
@@ -23,6 +25,9 @@ products_db = [
     {"id": 3, "title": "Đọc Vị Bất Kỳ Ai", "author": "David J. Lieberman", "price": "95,000 VND", "category": "Tâm lý học", "description": "Để không bị lừa dối và lợi dụng, hiểu thấu tâm lý người đối diện."},
     {"id": 4, "title": "Sách Cho Người Mới Đi Làm", "author": "Nhiều tác giả", "price": "120,000 VND", "category": "Kinh doanh", "description": "Kỹ năng làm việc hiệu quả, thích nghi nhanh với môi trường công sở."},
     {"id": 5, "title": "Đầu Tư Tài Chính", "author": "Zvi Bodie", "price": "350,000 VND", "category": "Tài chính", "description": "Kiến thức hàn lâm chuyên sâu về thị trường chứng khoán và quản lý danh mục đầu tư."},
+    {"id": 6, "title": "Tư Duy Nhanh Và Chậm", "author": "Daniel Kahneman", "price": "180,000 VND", "category": "Tâm lý học", "description": "Cuốn sách kinh điển phân tích hai hệ thống tư duy quyết định hành vi con người."},
+    {"id": 7, "title": "Cha Giàu Cha Nghèo", "author": "Robert Kiyosaki", "price": "98,000 VND", "category": "Tài chính", "description": "Bài học giá trị về quản lý tài chính cá nhân và tư duy làm giàu."},
+    {"id": 8, "title": "Hạt Giống Tâm Hồn", "author": "Nhiều tác giả", "price": "68,000 VND", "category": "Kỹ năng sống", "description": "Những câu chuyện ngắn đầy ý nghĩa và nghị lực vươn lên trong cuộc sống."},
 ]
 
 escalations_db = []
@@ -113,7 +118,7 @@ from dotenv import load_dotenv
 import httpx
 
 load_dotenv()
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook/bookmedi-webhook")
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook/alobook-webhook")
 N8N_USERNAME = os.getenv("N8N_USERNAME")
 N8N_PASSWORD = os.getenv("N8N_PASSWORD")
 
@@ -209,7 +214,7 @@ def send_message():
     # Rule-based fallback replies for local testing / when n8n webhook is not activated
     if "đơn hàng" in msg or "giao hàng" in msg:
         return jsonify({
-            "reply": "Để tra cứu đơn hàng, vui lòng nhập mã đơn hàng của bạn (Ví dụ: BM12345) hoặc click nút 'Vận chuyển & Giao hàng' bên dưới.",
+            "reply": "Để tra cứu đơn hàng, vui lòng nhập mã đơn hàng của bạn (Ví dụ: AB12345) hoặc click nút 'Vận chuyển & Giao hàng' bên dưới.",
             "buttons": [{"label": "Vận chuyển & Giao hàng", "value": "check_order"}]
         })
     elif "sách" in msg or "tìm sách" in msg:
@@ -225,7 +230,7 @@ def send_message():
         })
     
     # Check if this matches a order search directly
-    match = re.search(r"BM\d{5}", message, re.IGNORECASE)
+    match = re.search(r"AB\d{5}", message, re.IGNORECASE)
     if match:
         order_id = match.group(0).upper()
         order = orders_db.get(order_id)
@@ -245,7 +250,7 @@ def send_message():
             })
     
     return jsonify({
-        "reply": f"Chào {user_name or 'bạn'}! Tôi là AI Sales Assistant của Bookmedi. Tôi đã nhận được tin nhắn: '{message}'. (Lưu ý: n8n webhook tại cloud đang ngoại tuyến hoặc chưa kích hoạt, đây là phản hồi tự động từ Localhost)."
+        "reply": f"Chào {user_name or 'bạn'}! Tôi là AI Sales Assistant của AloBook. Tôi đã nhận được tin nhắn: '{message}'. (Lưu ý: n8n webhook tại cloud đang ngoại tuyến hoặc chưa kích hoạt, đây là phản hồi tự động từ Localhost)."
     })
 
 if __name__ == "__main__":
