@@ -1,8 +1,14 @@
 import os
 import time
 import re
+import unicodedata
 from collections import defaultdict
 from flask import Flask, request, jsonify, send_from_directory
+
+def remove_accents(input_str: str) -> str:
+    nfd_form = unicodedata.normalize('NFD', input_str)
+    temp = u"".join([c for c in nfd_form if unicodedata.category(c) != 'Mn'])
+    return temp.replace('đ', 'd').replace('Đ', 'D')
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
@@ -98,10 +104,17 @@ def get_order(order_id):
 @app.route("/api/products/search", methods=["GET"])
 def search_products():
     q = request.args.get("q", "").strip()
-    query = q.lower()
+    if not q:
+        return jsonify(products_db)
+        
+    q_clean = remove_accents(q.lower())
+    q_words = q_clean.split()
+    
     results = []
     for product in products_db:
-        if query in product["title"].lower() or query in product["description"].lower() or query in product["category"].lower():
+        target_text = f"{product['title']} {product['description']} {product['category']}".lower()
+        target_clean = remove_accents(target_text)
+        if all(word in target_clean for word in q_words):
             results.append(product)
     return jsonify(results)
 
