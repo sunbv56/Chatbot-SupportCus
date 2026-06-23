@@ -113,7 +113,10 @@ from dotenv import load_dotenv
 import httpx
 
 load_dotenv()
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook/bookmedi-webhook")
+# Always use production webhook (not webhook-test which requires editor to be open)
+N8N_WEBHOOK_URL_RAW = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook/bookmedi-webhook")
+# Strip '-test' from URL if accidentally using test webhook
+N8N_WEBHOOK_URL = N8N_WEBHOOK_URL_RAW.replace("/webhook-test/", "/webhook/")
 N8N_USERNAME = os.getenv("N8N_USERNAME")
 N8N_PASSWORD = os.getenv("N8N_PASSWORD")
 
@@ -149,8 +152,8 @@ def send_message():
             
             auth = (N8N_USERNAME, N8N_PASSWORD) if N8N_USERNAME and N8N_PASSWORD else None
             
-            # Send sync POST with timeout as multipart/form-data
-            response = httpx.post(N8N_WEBHOOK_URL, files=files, auth=auth, timeout=180.0)
+            # Send sync POST with timeout 25s (Cloudflare n8n.cloud kills at ~100s, keep well under)
+            response = httpx.post(N8N_WEBHOOK_URL, files=files, auth=auth, timeout=25.0)
             
             if response.status_code in [200, 201]:
                 n8n_data = response.json()
@@ -183,15 +186,26 @@ def send_message():
                     "buttons": buttons,
                     "escalated": escalated
                 })
-            else:
-                print(f"[Proxy Warning] n8n responded with status {response.status_code}: {response.text}")
+            elif response.status_code == 524:
+                # Cloudflare timeout - n8n workflow took too long
+                print(f"[Proxy Warning] n8n 524 timeout - workflow is too slow or not activated")
                 return jsonify({
-                    "reply": f"⚠️ **Lỗi n8n workflow (HTTP {response.status_code})**: {response.text}\nVui lòng kiểm tra mục **Executions** (Lịch sử chạy) trên giao diện n8n cloud để xem chi tiết node nào bị lỗi."
+                    "reply": "⏱️ Hệ thống AI đang xử lý hơi lâu. Vui lòng thử lại sau vài giây, hoặc hỏi tôi câu khác nhé!"
                 })
+            else:
+                print(f"[Proxy Warning] n8n responded with status {response.status_code}: {response.text[:200]}")
+                return jsonify({
+                    "reply": f"⚠️ Không thể kết nối đến AI lúc này (lỗi {response.status_code}). Vui lòng thử lại sau."
+                })
+        except httpx.TimeoutException:
+            print(f"[Proxy Error] n8n webhook timed out after 25s")
+            return jsonify({
+                "reply": "⏱️ AI đang bận xử lý, phản hồi hơi chậm. Bạn vui lòng thử lại sau vài giây nhé!"
+            })
         except Exception as e:
             print(f"[Proxy Error] Failed to connect to n8n webhook: {str(e)}")
             return jsonify({
-                "reply": f"⚠️ **Lỗi kết nối đến n8n**: {str(e)}\nKhông thể gọi webhook {N8N_WEBHOOK_URL}. Vui lòng kiểm tra cấu hình trong file `.env`."
+                "reply": "⚠️ Không thể kết nối đến hệ thống AI lúc này. Vui lòng thử lại sau."
             })
             # Fall back to rule-based mock for testing if n8n is offline or building
 
