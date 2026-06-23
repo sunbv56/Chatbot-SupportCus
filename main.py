@@ -113,7 +113,7 @@ from dotenv import load_dotenv
 import httpx
 
 load_dotenv()
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook-test/bookmedi-webhook")
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "https://sunbv56.app.n8n.cloud/webhook/bookmedi-webhook")
 N8N_USERNAME = os.getenv("N8N_USERNAME")
 N8N_PASSWORD = os.getenv("N8N_PASSWORD")
 
